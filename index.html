@@ -33,6 +33,10 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        // Add a directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        scene.add(directionalLight);
+
         // Add lights for even lighting
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
@@ -42,6 +46,7 @@
             .setPath('textures/') // Adjust the path to your HDRI file
             .load('brown_photostudio_02_1k.hdr', function (texture) {
                 const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+                envMap.intensity = 1; // Adjust intensity here
                 scene.environment = envMap;
                 texture.dispose();
                 pmremGenerator.dispose();
@@ -59,10 +64,14 @@
         // Add controls to rotate the model
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+        let lightAngle = 0;
+
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
+            lightAngle += 0.01;
+            directionalLight.position.set(Math.sin(lightAngle) * 5, 5, Math.cos(lightAngle) * 5);
             renderer.render(scene, camera);
         }
 
