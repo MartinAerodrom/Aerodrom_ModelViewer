@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model Viewer</title>
     <style>
-        body { margin: 0; }
+        body { margin: 0; background-color: #808080; }
         canvas { display: block; }
     </style>
 </head>
@@ -16,9 +16,13 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <!-- Include OrbitControls -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Include RGBELoader and PMREMGenerator -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/RGBELoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/pmrem/PMREMGenerator.js"></script>
     <script>
         // Create the scene
         const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x808080); // gray background
 
         // Set up the camera
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -30,16 +34,18 @@
         document.body.appendChild(renderer.domElement);
 
         // Add lights for even lighting
-        const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
-        scene.add(ambientLight);
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
 
-        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight1.position.set(1, 1, 1).normalize();
-        scene.add(directionalLight1);
-
-        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight2.position.set(-1, -1, -1).normalize();
-        scene.add(directionalLight2);
+        // Load HDRI environment map
+        new THREE.RGBELoader()
+            .setPath('textures/') // Adjust the path to your HDRI file
+            .load('brown_photostudio_02_1k.hdr', function (texture) {
+                const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+                scene.environment = envMap;
+                texture.dispose();
+                pmremGenerator.dispose();
+            });
 
         // Load the 3D model
         const loader = new THREE.GLTFLoader();
