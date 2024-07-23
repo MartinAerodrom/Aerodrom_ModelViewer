@@ -33,6 +33,12 @@
         const light = new THREE.AmbientLight(0x404040); // soft white light
         scene.add(light);
 
+        // Add a simple cube for debugging
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
         // Load the 3D model
         const loader = new THREE.GLTFLoader();
         loader.load('model/Incom_Logo08.gltf', function (gltf) {
@@ -59,6 +65,9 @@
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
         });
+
+        // Start animation loop
+        animate();
     </script>
 </body>
 </html>
