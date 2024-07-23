@@ -64,14 +64,13 @@
         // Add controls to rotate the model
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-        let lightAngle = 0;
+       
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
-            lightAngle += 0.01;
-            directionalLight.position.set(Math.sin(lightAngle) * 5, 5, Math.cos(lightAngle) * 5);
+            
             renderer.render(scene, camera);
         }
 
