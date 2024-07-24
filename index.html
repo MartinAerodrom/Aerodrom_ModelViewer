@@ -57,8 +57,12 @@
         loader.load('model/Incom_Logo026.gltf', function (gltf) {
             gltf.scene.traverse((node) => {
                 if (node.isMesh) {
-                    node.material.flatShading = true;
-                    node.material.needsUpdate = true;
+                    // Replace the material with MeshBasicMaterial for flat shading
+                    const flatMaterial = new THREE.MeshBasicMaterial({
+                        color: node.material.color,
+                        flatShading: true
+                    });
+                    node.material = flatMaterial;
                 }
             });
             scene.add(gltf.scene);
