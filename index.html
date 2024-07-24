@@ -52,14 +52,22 @@
                 pmremGenerator.dispose();
             });
 
+        // Function to lighten colors
+        function lightenColor(color, intensity) {
+            const white = new THREE.Color(0xffffff);
+            return color.lerp(white, intensity);
+        }
+
         // Load the 3D model
         const loader = new THREE.GLTFLoader();
         loader.load('model/Incom_Logo026.gltf', function (gltf) {
             gltf.scene.traverse((node) => {
                 if (node.isMesh) {
-                    // Replace the material with MeshBasicMaterial for flat shading
+                    // Lighten the material color
+                    const originalColor = new THREE.Color(node.material.color);
+                    const lightenedColor = lightenColor(originalColor, 0.5); // Adjust intensity to lighten color
                     const flatMaterial = new THREE.MeshBasicMaterial({
-                        color: node.material.color,
+                        color: lightenedColor,
                         flatShading: true
                     });
                     node.material = flatMaterial;
