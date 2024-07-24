@@ -52,9 +52,14 @@
                 pmremGenerator.dispose();
             });
 
-        // Load the 3D model
         const loader = new THREE.GLTFLoader();
         loader.load('model/Incom_Logo026.gltf', function (gltf) {
+            gltf.scene.traverse((node) => {
+                if (node.isMesh) {
+                    node.material.flatShading = true;
+                    node.material.needsUpdate = true;
+                }
+            });
             scene.add(gltf.scene);
             animate();
         }, undefined, function (error) {
